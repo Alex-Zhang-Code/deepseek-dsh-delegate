@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "task_id": "wrapper-fixture-001",
+  "objective": "Return the fixture response.",
+  "working_directory": "C:\\Projects\\example",
+  "mode": "read_only",
+  "allowed_paths": [],
+  "forbidden_actions": ["Do not modify files"],
+  "context": "Offline wrapper test.",
+  "expected_output": {
+    "format": "text",
+    "requirements": ["Return fixture ok"]
+  },
+  "acceptance_criteria": ["The normalized result is completed"],
+  "session_id": null,
+  "metadata": {}
+}

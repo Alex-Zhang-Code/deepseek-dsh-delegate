@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "task_id": "summarize-project-001",
+  "objective": "Summarize the project entry points and data flow. Do not modify files.",
+  "working_directory": "C:\\Projects\\example",
+  "mode": "read_only",
+  "allowed_paths": [
+    "C:\\Projects\\example\\src"
+  ],
+  "forbidden_actions": [
+    "Do not modify or delete files",
+    "Do not access serial ports or flash hardware",
+    "Do not use the network"
+  ],
+  "context": "A bounded read-only project review. Report missing information explicitly.",
+  "expected_output": {
+    "format": "markdown",
+    "requirements": [
+      "Describe the data flow",
+      "Cite relevant file paths and line numbers",
+      "Separate confirmed facts from uncertainty"
+    ]
+  },
+  "acceptance_criteria": [
+    "The answer cites project entry points or explicitly reports that they were not found",
+    "No file is modified"
+  ],
+  "session_id": null,
+  "metadata": {
+    "delegated_by": "codex"
+  }
+}

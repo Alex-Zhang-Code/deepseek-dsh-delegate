@@ -1,0 +1,17 @@
+# Adapt these placeholders to the target provider and exact supported model ID.
+# Merge with the headless profile initialized by the installed DSH version.
+- id: llm-pi-ai
+  name: '@deepseek-ai/dsh-llm-pi-ai'
+  config:
+    providers:
+      openai-relay:
+        apiKeyEnv: DEEPSEEK_RELAY_API_KEY
+        api: openai-completions
+        baseURL: https://api.example.com/v1
+        models:
+          - id: REPLACE_WITH_PROVIDER_MODEL_ID
+- id: agent-default-model
+  name: '@deepseek-ai/dsh-agent-default-model'
+  config:
+    provider: openai-relay
+    model: REPLACE_WITH_PROVIDER_MODEL_ID

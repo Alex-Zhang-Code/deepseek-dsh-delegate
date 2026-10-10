@@ -1,0 +1,7 @@
+# Merge this block into the target device's Codex config.toml.
+# Replace the example path with the absolute location of this repository.
+[mcp_servers.deepseek-dsh]
+command = 'node'
+args = ['C:\Tools\deepseek-dsh-delegate\tools\dsh-mcp\server.mjs']
+env_vars = ['DEEPSEEK_RELAY_API_KEY', 'DSH_HOME', 'DEEPSEEK_DSH_PATH', 'LOCALAPPDATA', 'USERPROFILE']
+tool_timeout_sec = 360

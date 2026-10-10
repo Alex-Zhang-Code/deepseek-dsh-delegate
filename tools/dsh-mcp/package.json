@@ -1,0 +1,17 @@
+{
+  "name": "local-deepseek-dsh-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A local DeepSeek Harness task adapter for Codex",
+  "engines": { "node": ">=20.3" },
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test ../../tests/test-dsh-mcp.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1"
+  }
+}

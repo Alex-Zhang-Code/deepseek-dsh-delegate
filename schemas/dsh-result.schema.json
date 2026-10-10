@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.example/schemas/dsh-result.schema.json",
+  "title": "DeepSeek Harness delegated task result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "task_id",
+    "status",
+    "status_history",
+    "session_id",
+    "final_text",
+    "usage",
+    "protocol",
+    "verification",
+    "error",
+    "started_at",
+    "finished_at",
+    "duration_ms"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "task_id": {
+      "type": "string"
+    },
+    "status": {
+      "enum": ["submitted", "working", "completed", "failed", "canceled"]
+    },
+    "status_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["status", "at"],
+        "properties": {
+          "status": {
+            "enum": ["submitted", "working", "completed", "failed", "canceled"]
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "session_id": {
+      "type": ["string", "null"]
+    },
+    "final_text": {
+      "type": "string"
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_tokens", "output_tokens", "total_tokens"],
+      "properties": {
+        "input_tokens": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "output_tokens": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "total_tokens": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        }
+      }
+    },
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passed",
+        "dsh_exit_code",
+        "turn_end_reason",
+        "final_event_seen",
+        "jsonl_event_count",
+        "invalid_jsonl_line_count",
+        "stderr"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "dsh_exit_code": {
+          "type": ["integer", "null"]
+        },
+        "turn_end_reason": {
+          "type": ["string", "null"]
+        },
+        "final_event_seen": {
+          "type": "boolean"
+        },
+        "jsonl_event_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "invalid_jsonl_line_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stderr": {
+          "type": "string"
+        }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol", "output_format", "semantic", "acceptance_criteria"],
+      "properties": {
+        "protocol": {
+          "enum": ["passed", "failed"]
+        },
+        "output_format": {
+          "enum": ["passed", "failed", "not_checked"]
+        },
+        "semantic": {
+          "const": "required_by_caller"
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "error": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["stage", "code", "message"],
+          "properties": {
+            "stage": {
+              "enum": ["validation", "launch", "dsh", "protocol", "verification"]
+            },
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "duration_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  }
+}

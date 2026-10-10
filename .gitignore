@@ -1,0 +1,16 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.dsh/
+.codex/
+.agents/
+*.log
+*.jsonl
+*.local.json
+*.local.yml
+*.local.yaml
+coverage/
+artifacts/
+.DS_Store
+Thumbs.db

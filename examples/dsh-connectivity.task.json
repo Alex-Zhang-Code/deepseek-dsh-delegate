@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "task_id": "connectivity-check",
+  "objective": "Do not read, create or modify any files. Reply exactly: \u8fde\u63a5\u6b63\u5e38\u3002",
+  "working_directory": "C:\\Projects\\example",
+  "mode": "read_only",
+  "allowed_paths": [],
+  "forbidden_actions": ["Do not use tools or run commands", "Do not access project files or credentials"],
+  "context": "A connectivity check only.",
+  "expected_output": { "format": "text", "requirements": ["One exact sentence"] },
+  "acceptance_criteria": ["The final answer is exactly the requested sentence", "No tool calls are made"],
+  "timeout_seconds": 120,
+  "session_id": null,
+  "metadata": { "delegated_by": "codex" }
+}
