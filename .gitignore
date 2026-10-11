@@ -5,6 +5,7 @@ node_modules/
 .dsh/
 .codex/
 .agents/
+local/
 *.log
 *.jsonl
 *.local.json

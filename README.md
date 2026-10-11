@@ -19,6 +19,9 @@ Caller -> PowerShell or MCP -> shared runner -> DSH headless -> configured model
 The DSH desktop window does not need to be open. DSH still writes its own
 profile/session data. This repository does not bundle DSH, Node.js or credentials.
 
+Workstation-specific notes, tasks and diagnostics can be kept under `local/`.
+That directory is ignored and must not contain API keys, tokens or private keys.
+
 ## Install on another device
 
 Clone or extract the repository into any directory. From its root, run:
