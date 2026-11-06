@@ -13,7 +13,7 @@ const fixture = path.join(root, 'tests/fixtures/fake-dsh.mjs');
 const cli = path.join(root, 'tools/dsh-mcp/cli.mjs');
 const server = path.join(root, 'tools/dsh-mcp/server.mjs');
 const template = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/task.json'), 'utf8'));
-const offlineEnv = { DEEPSEEK_RELAY_API_KEY: 'offline-test-key', DEEPSEEK_DSH_PATH: fixture, DSH_FAKE_LOG: '' };
+const offlineEnv = { DEEPSEEK_RELAY_API_KEY: 'offline-test-key', DEEPSEEK_DSH_PATH: fixture, DSH_FAKE_LOG: '', DSH_TRACE_ENABLED: '0', DSH_DASHBOARD_AUTO_START: '0' };
 const makeTask = (scenario = 'success', overrides = {}) => ({ ...structuredClone(template),
   working_directory: root, metadata: { fixture_scenario: scenario }, ...overrides });
 function valid(result) { assert.equal(validateResult(result), true, JSON.stringify(validateResult.errors)); }

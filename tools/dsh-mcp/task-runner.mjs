@@ -6,6 +6,7 @@ import { spawn } from 'node:child_process';
 import readline from 'node:readline';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { createTrace } from './trace-store.mjs';
 
 export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 export const taskSchema = JSON.parse(fs.readFileSync(path.join(root, 'schemas/dsh-task.schema.json'), 'utf8'));
@@ -75,7 +76,7 @@ function comparablePath(value) {
 }
 
 // Resolve existing ancestors too, so a symlink cannot make an allowed output path escape the workspace.
-function canonicalPath(value) {
+export function canonicalPath(value) {
   let ancestor = path.resolve(value);
   const missing = [];
   while (!fs.existsSync(ancestor)) {
@@ -87,7 +88,7 @@ function canonicalPath(value) {
   return path.join(fs.realpathSync(ancestor), ...missing);
 }
 
-function validateLocalTask(task) {
+export function validateLocalTask(task) {
   if (!validateTask(task)) return `Task schema: ${ajv.errorsText(validateTask.errors, { separator: '; ' })}`;
   if (!task.objective.trim()) return 'objective must not be blank.';
   if (!task.acceptance_criteria.every(item => item.trim())) return 'acceptance_criteria must not contain blank values.';
@@ -139,6 +140,14 @@ function terminateTree(child) {
 }
 
 export async function executeTask(task, options = {}) {
+  const env = { ...process.env, ...options.env };
+  const trace = options.trace === undefined ? createTrace(task, env) : options.trace;
+  const outcome = await executeTaskCore(task, { ...options, trace });
+  await trace?.finish(outcome.result);
+  return outcome;
+}
+
+async function executeTaskCore(task, options = {}) {
   const result = initialResult(task);
   const env = { ...process.env, ...options.env };
   const fail = (stage, code, message, exitCode = 1, status = 'failed') =>
@@ -182,6 +191,7 @@ export async function executeTask(task, options = {}) {
     });
     result.status_history.push({ status: 'working', at: new Date().toISOString() });
     result.status = 'working';
+    options.trace?.write({ kind: 'working', stage: 'dsh_launch' });
     const events = [];
     const usageSteps = new Set();
     let sessionCount = 0;
@@ -233,6 +243,7 @@ export async function executeTask(task, options = {}) {
         return;
       }
       result.protocol.jsonl_event_count++;
+      options.trace?.event(event);
       if (options.includeEvents) events.push(event);
       if (event.type === 'session') {
         sessionCount++;

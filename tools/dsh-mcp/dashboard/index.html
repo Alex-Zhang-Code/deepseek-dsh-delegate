@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DSH 任务中心</title><link rel="stylesheet" href="/style.css"><script defer src="/lucide.js"></script><script defer src="/app.js"></script></head>
+<body>
+  <header><div class="brand"><span class="brand-icon"><i data-lucide="workflow"></i></span><div><h1>DSH 任务中心</h1><span class="muted">Agent operations</span></div></div><div class="connection"><span id="connection-dot" class="dot"></span><span id="connection">连接中</span><button id="refresh" class="icon-button" title="刷新" aria-label="刷新"><i data-lucide="refresh-cw"></i></button></div></header>
+  <main>
+    <div id="executor" class="executor-status" role="status"></div>
+    <section class="overview" aria-label="任务概况"><div><span>全部任务</span><strong id="total">0</strong></div><div><span>执行中</span><strong id="active">0</strong></div><div><span>待验收</span><strong id="pending">0</strong></div><div><span>失败</span><strong id="failed">0</strong></div></section>
+    <section class="workspace">
+      <div class="task-list"><div class="list-toolbar"><h2>任务队列</h2><span id="count" class="muted">0 项</span></div><div class="filters"><label class="search"><i data-lucide="search"></i><input id="search" placeholder="搜索任务或目标" aria-label="搜索任务"></label><select id="filter" aria-label="筛选状态"><option value="all">全部状态</option><option value="active">执行中</option><option value="pending">待验收</option><option value="failed">失败</option><option value="passed">验收通过</option></select></div><div id="tasks"></div></div>
+      <section class="detail" id="detail" aria-label="任务详情"><div class="empty"><i data-lucide="inbox"></i><h2>暂无任务记录</h2></div></section>
+    </section>
+  </main>
+  <template id="detail-template"><div class="detail-header"><div><div id="run-label" class="eyebrow"></div><h2 id="task-title"></h2></div><span id="task-status" class="badge"></span></div><p id="objective" class="objective"></p><div class="handoff"><span id="caller"></span><i data-lucide="arrow-right"></i><span>DeepSeek Harness</span><i data-lucide="arrow-right"></i><span>结果验收</span></div><dl class="metadata" id="metadata"></dl><div id="ticket-controls"></div><div class="tabs" role="tablist"><button data-tab="timeline" class="selected" role="tab">执行记录</button><button data-tab="result" role="tab">返回结果</button><button data-tab="acceptance" role="tab">验收</button></div><div id="tab-content"></div></template>
+</body></html>

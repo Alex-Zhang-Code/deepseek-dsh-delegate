@@ -8,9 +8,18 @@ same task runner, JSON task contract and normalized result.
 Caller -> PowerShell or MCP -> shared runner -> DSH headless -> configured model
 ```
 
+## Task dashboard
+
+Run `powershell.exe -NoProfile -File .\scripts\start-dashboard.ps1` to open a
+local task center (normally `http://127.0.0.1:8766`). It shows handoffs,
+execution events, results and independent acceptance checks. Every delegation
+is recorded under ignored `local/observability/` by default. See
+[observability and optional Langfuse export](docs/observability.md) for setup,
+recorded content and `record_deepseek_verification` usage.
+
 ## Requirements
 
-- Node.js 20.3 or newer, including npm.
+- Node.js 22.13 or newer, including npm (built-in SQLite for durable tasks).
 - DeepSeek Harness installed and a working `headless` profile.
 - An API credential available as `DEEPSEEK_RELAY_API_KEY`.
 - Windows is the currently tested deployment target. Linux/Jetson deployment
@@ -103,7 +112,8 @@ Start a new or resumed Codex session after registration.
 
 States are `submitted`, `working`, `completed`, `failed` and `canceled`.
 The wrapper waits for a terminal result and records intermediate states in
-`status_history`; it is not a persistent A2A task service.
+`status_history`. The optional durable service adds local `interrupted` state
+and keeps Tickets/Assignments in SQLite; it is not a full A2A network service.
 
 `completed` means the DSH event stream and output format passed validation.
 The caller must still verify the answer, acceptance criteria and any file
@@ -111,12 +121,30 @@ changes. `mode` and `allowed_paths` are prompt constraints, not an OS sandbox.
 Calls are serialized within one MCP server. Timeout excludes queue time;
 failed or canceled tasks are not automatically retried.
 
+## Durable multi-agent work
+
+Use `build_deepseek_task` to construct a valid task from simple fields, then
+`submit_deepseek_task` to submit asynchronously. Inspect `get_deepseek_task`
+and `list_deepseek_tasks`, request cancellation when needed, and record final
+acceptance with `verify_deepseek_task` naming the latest Assignment. A detached
+local executor continues when the MCP client disconnects. Queued tasks survive
+restart; uncertain interrupted work requires explicit review before retry.
+
+The existing dashboard now includes Tickets, attempt selection, execution
+events, cancellation, reviewed retry/resolution and independent acceptance.
+Default concurrency is one; optional 1..4 workers require separate workspaces.
+Sync calls remain compatible and do not participate in durable workspace locks.
+No notification wakes an inactive Codex conversation: poll/recover Tickets.
+See [durable task usage, recovery and delivery](docs/durable-tasks.md).
+
 ## Tests
 
 Run from the repository root after installing dependencies:
 
 ```powershell
 node --test tests/test-dsh-mcp.mjs
+node --test tests/test-observability.mjs
+node --test tests/test-tickets.mjs
 ```
 
 This offline suite uses a dummy credential and fake DSH. Windows timeout and
@@ -133,8 +161,9 @@ modify project files, but DSH updates its local runtime state.
 
 ## Minimal delivery
 
-MCP needs only `server.mjs`, `task-runner.mjs`, `package.json`,
-`package-lock.json` in `tools/dsh-mcp`, plus the two schema files in `schemas`.
+MCP needs all top-level `.mjs` modules, `package.json`, `package-lock.json`
+in `tools/dsh-mcp`, plus the two schema files in `schemas`. Include the
+`dashboard/` directory when using the local dashboard or its auto-start.
 Keep this layout: the runner locates schemas relative to its own file.
 Add `scripts/invoke-dsh.ps1` and `tools/dsh-mcp/cli.mjs` for PowerShell use.
 

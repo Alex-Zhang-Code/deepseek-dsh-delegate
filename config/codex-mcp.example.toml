@@ -3,5 +3,8 @@
 [mcp_servers.deepseek-dsh]
 command = 'node'
 args = ['C:\Tools\deepseek-dsh-delegate\tools\dsh-mcp\server.mjs']
-env_vars = ['DEEPSEEK_RELAY_API_KEY', 'DSH_HOME', 'DEEPSEEK_DSH_PATH', 'LOCALAPPDATA', 'USERPROFILE']
+env_vars = ['DEEPSEEK_RELAY_API_KEY', 'DSH_HOME', 'DEEPSEEK_DSH_PATH', 'LOCALAPPDATA', 'USERPROFILE', 'DSH_TRACE_DIR', 'DSH_DASHBOARD_AUTO_START', 'DSH_MAX_WORKERS', 'LANGFUSE_BASE_URL', 'LANGFUSE_PUBLIC_KEY', 'LANGFUSE_SECRET_KEY']
 tool_timeout_sec = 360
+
+[mcp_servers.deepseek-dsh.env]
+DSH_DASHBOARD_AUTO_START = '1'

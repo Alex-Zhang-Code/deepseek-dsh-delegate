@@ -15,7 +15,7 @@ This contract is the local boundary between the primary agent and DeepSeek Harne
 
 ## Lifecycle
 
-The vocabulary is `submitted`, `working`, `completed`, `failed`, and `canceled`. The current wrapper is synchronous, so intermediate states are recorded in `status_history` and the wrapper returns one final result object.
+The version 1.0 result vocabulary is `submitted`, `working`, `completed`, `failed`, and `canceled`. The original wrapper is synchronous, so intermediate states are recorded in `status_history` and it returns one final result object. The optional durable Ticket layer has separate persistent state including `interrupted`; see [durable tasks](durable-tasks.md). It preserves this result schema inside each Assignment.
 
 `completed` means all of the following are true:
 
@@ -72,7 +72,7 @@ The process writes exactly one JSON result to stdout. Exit codes are:
 
 Use `-IncludeEvents` only for diagnostics. It adds the parsed DSH events to the result and can make the response much larger.
 
-Also supported: `-DshPath`, `-DshHome`, `-TimeoutSeconds` (1-300). Use UTF-8 JSON; BOM is accepted. Node 20.3+ is required. First install dependencies with `npm.cmd ci` in `tools/dsh-mcp`.
+Also supported: `-DshPath`, `-DshHome`, `-TimeoutSeconds` (1-300). Use UTF-8 JSON; BOM is accepted. Node 22.13+ is required for this package. First install dependencies with `npm.cmd ci` in `tools/dsh-mcp`.
 
 If execution policy blocks this trusted script, add `-ExecutionPolicy Bypass` for that process only. Do not change the machine/user execution policy.
 
@@ -85,6 +85,12 @@ stdout/stderr together are limited to 16 MiB. Timeout/cancellation requests proc
 The stdio MCP server uses the official `@modelcontextprotocol/sdk` and calls the same Node `executeTask` as the PowerShell entry point. It exposes `delegate_to_deepseek`; arguments are the task object defined by `schemas/dsh-task.schema.json`, without an extra `task` wrapper. It returns text and `structuredContent`, with `isError: true` for failed/canceled tasks.
 
 No temporary task file or PowerShell subprocess is needed for MCP. Calls are serialized within one server; multiple servers/direct CLI calls are not coordinated. Timeout starts when DSH launches, excluding queue time. Set a client timeout longer than task timeout plus queue time. MCP cancellation aborts active work and skips queued canceled work. Closing stdin/ending the connection aborts all work. These are ordinary MCP calls, not persistent MCP/A2A task APIs.
+
+The preceding paragraph describes synchronous `delegate_to_deepseek`. The new
+`submit_deepseek_task` instead persists a Ticket, returns immediately and runs
+in an independent executor. Its input uses simplified builder fields, not this
+full task envelope. Disconnecting its client does not cancel the Ticket. See
+[durable tasks](durable-tasks.md) for the complete tool set and CLI.
 
 Register it with the local Codex CLI from a terminal where `DEEPSEEK_RELAY_API_KEY` is already available:
 
